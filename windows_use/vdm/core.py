@@ -1100,3 +1100,15 @@ def get_all_desktops() -> list[dict]:
 
 def get_current_desktop() -> dict:
     return _get_manager().get_current_desktop()
+
+
+def is_vdm_available() -> bool:
+    """Whether Windows virtual desktops are usable on this system.
+
+    Returns False on Windows 7/8/8.1 or any system where the Virtual Desktop
+    Manager COM objects failed to initialize. State queries degrade to a
+    single "Default Desktop"; mutating actions should be skipped with a
+    clear error instead of an opaque COM failure.
+    """
+    manager = _get_manager()
+    return bool(getattr(manager, "_internal_manager", None))

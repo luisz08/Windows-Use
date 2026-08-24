@@ -23,6 +23,7 @@ from windows_use.agent.tools.views import (
 )
 from windows_use.tools import Tool
 from windows_use.vdm.core import create_desktop as vdm_create
+from windows_use.vdm.core import is_vdm_available
 from windows_use.vdm.core import remove_desktop as vdm_remove
 from windows_use.vdm.core import rename_desktop as vdm_rename
 from windows_use.vdm.core import switch_desktop as vdm_switch
@@ -553,6 +554,12 @@ async def desktop_tool(
     - rename: Renames desktop_name to new_name.
     - switch: Activates the desktop specified by desktop_name. Verify success in the next Desktop State.
     """
+    if not is_vdm_available():
+        return (
+            "Error: Virtual desktops are not supported on this Windows version "
+            "(requires Windows 10 build 17763+). Continue the task without "
+            "virtual desktops."
+        )
     try:
         match action:
             case "create":
