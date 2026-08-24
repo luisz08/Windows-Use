@@ -26,7 +26,7 @@ dependencies = [
     "ipykernel>=6.29.5",
     "markdownify>=1.1.0",
     "pillow>=11.2.1",
-    "psutil>=7.0.0",
+    "psutil>=7.0.0,<8",  # 8.0.0 dropped Windows 7/8/8.1 (last Win7 line: 7.x)
     "pydantic>=2.11.7",
     "python-levenshtein>=0.27.1",
     "rich>=14.0.0",
@@ -56,10 +56,9 @@ dependencies = [
     "pynacl>=1.6.2",
     "elevenlabs>=2.35.0",
     "deepgram-sdk>=4.0,<5.0",
-    "datasets>=4.5.0",
     "typer>=0.15.0",
     "questionary>=2.0.0",
-    "cryptography>=44.0.0",
+    "cryptography>=44.0.0,<45",  # 45.0.0 dropped Win7 wheels (44.0.x restored them)
     "pytest-asyncio>=1.4.0"
 ]
 
@@ -76,6 +75,11 @@ speech = [
     "pyaudio>=0.2.14",
     "elevenlabs>=1.50.0",
     "deepgram-sdk>=3.0.0",
+]
+# datasets pulls pyarrow, which is not realistically installable on Windows 7;
+# it is not imported anywhere in the agent runtime (training/eval only).
+training = [
+    "datasets>=4.5.0",
 ]
 
 [build-system]

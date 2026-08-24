@@ -8,7 +8,7 @@
     <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
   </a>
   <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python">
-  <img src="https://img.shields.io/badge/platform-Windows%207–11-blue" alt="Platform: Windows 7 to 11">
+  <img src="https://img.shields.io/badge/platform-Windows%2010%E2%80%9311-blue" alt="Platform: Windows 10 to 11 (Win 7/8.1 community-supported)">
   <br>
 
   <a href="https://x.com/CursorTouch">
@@ -39,7 +39,14 @@ Give it a task in plain English. It handles the rest.
 
 ## 🛠️ Installation
 
-**Prerequisites:** Python 3.10+, Windows 7/8/10/11
+**Prerequisites:** Python 3.10+, Windows 10/11
+
+| OS | Support |
+|---|---|
+| Windows 11 | ✅ Full (incl. virtual desktops) |
+| Windows 10 ≥ 17763 | ✅ Full (incl. virtual desktops) |
+| Windows 10 1607–17762 | ⚠️ Core works; virtual desktop tools unavailable |
+| Windows 8.1 / 7 SP1 | 🧪 Community-supported via [docs/WIN7.md](docs/WIN7.md) — needs an unofficial Python 3.10/3.11 build; virtual desktop tools unavailable |
 
 ```bash
 pip install windows-use
