@@ -15,6 +15,7 @@ import requests
 import win32con
 import win32gui
 import win32process
+from comtypes import COMError
 from fuzzywuzzy import process
 from markdownify import markdownify
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
@@ -79,7 +80,7 @@ class Desktop:
         try:
             active_desktop = get_current_desktop()
             all_desktops = get_all_desktops()
-        except RuntimeError:
+        except (RuntimeError, OSError, COMError):  # VDM unavailable (Win7/8) or COM failure
             active_desktop = {
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": "Default Desktop",
@@ -672,9 +673,25 @@ class Desktop:
         self._cached_user_account_type = result
         return result
 
-    def get_dpi_scaling(self):
+    def get_dpi_scaling(self) -> float:
+        """Get the system DPI scaling factor (1.0 = 96 DPI).
+
+        Uses ``GetDpiForSystem`` (Windows 10 1607+). On older systems
+        (Windows 7/8/8.1) where that API does not exist, falls back to
+        ``GetDeviceCaps(hdc, LOGPIXELSX)``, available since Windows 95.
+        """
         user32 = ctypes.windll.user32
-        dpi = user32.GetDpiForSystem()
+        get_dpi_for_system = getattr(user32, "GetDpiForSystem", None)
+        if get_dpi_for_system is not None:
+            return get_dpi_for_system() / 96.0
+        # Windows 7/8/8.1 fallback: query the DC of the primary screen.
+        # Safe with the process-DPI-aware fallback set in uia.core.
+        user32.GetDC.restype = ctypes.c_void_p
+        hdc = user32.GetDC(None)
+        try:
+            dpi = ctypes.windll.gdi32.GetDeviceCaps(hdc, win32con.LOGPIXELSX)
+        finally:
+            user32.ReleaseDC(None, ctypes.c_void_p(hdc))
         return dpi / 96.0
 
     def get_screen_size(self) -> Size:
